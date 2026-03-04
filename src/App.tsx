@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
-import Intro from './components/Intro';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import HeroFilter from './components/HeroFilter';
 import PropertyCard from './components/PropertyCard';
 import PropertyDetail from './components/PropertyDetail';
 import { properties, Property } from './data/properties';
+import introVideo from './intro1.mp4';
 
 interface FilterState {
   category: string;
@@ -19,18 +19,36 @@ interface FilterState {
 }
 
 function App() {
-  // ✅ Intro: ilk girişte göster, refresh'te gösterme (localStorage)
-  const [showIntro, setShowIntro] = useState(false);
-
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [filters, setFilters] = useState<FilterState | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
-  // ✅ Sadece ilk ziyarette intro göster
+  const [showIntro, setShowIntro] = useState(false);
+  const [introClosing, setIntroClosing] = useState(false);
+
   useEffect(() => {
-    const seen = localStorage.getItem('intro_seen');
-    if (!seen) setShowIntro(true);
+    const hasSeenIntro = sessionStorage.getItem('site-intro-played');
+
+    if (!hasSeenIntro) {
+      setShowIntro(true);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, []);
+
+  const closeIntro = () => {
+    setIntroClosing(true);
+    sessionStorage.setItem('site-intro-played', 'true');
+
+    setTimeout(() => {
+      setShowIntro(false);
+      setIntroClosing(false);
+      document.body.style.overflow = 'auto';
+    }, 500);
+  };
 
   const filteredProperties = useMemo(() => {
     let result = [...properties];
@@ -86,16 +104,33 @@ function App() {
     setFilters(null);
   };
 
-  // ✅ Intro bitince: bir daha göstermemek için kaydet
-  const handleIntroFinish = () => {
-    localStorage.setItem('intro_seen', '1');
-    setShowIntro(false);
-  };
-
   return (
     <>
-      {showIntro && <Intro onFinish={handleIntroFinish} />} 
-      {showIntro && <Intro onFinish={handleIntroFinish} />}
+      {showIntro && (
+        <div
+          className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black transition-opacity duration-500 ${
+            introClosing ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          <button
+            onClick={closeIntro}
+            className="absolute right-5 top-5 z-10 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur hover:bg-white/30"
+          >
+            Geç
+          </button>
+
+          <video
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              playsInline
+              preload="auto"
+              onEnded={closeIntro}
+>
+            <source src={introVideo} type="video/mp4" />
+          </video>
+        </div>
+      )}
 
       <div className="min-h-screen bg-gray-50">
         <Header />

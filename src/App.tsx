@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import Intro from './components/Intro';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import HeroFilter from './components/HeroFilter';
@@ -18,9 +19,18 @@ interface FilterState {
 }
 
 function App() {
+  // ✅ Intro: ilk girişte göster, refresh'te gösterme (localStorage)
+  const [showIntro, setShowIntro] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [filters, setFilters] = useState<FilterState | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+
+  // ✅ Sadece ilk ziyarette intro göster
+  useEffect(() => {
+    const seen = localStorage.getItem('intro_seen');
+    if (!seen) setShowIntro(true);
+  }, []);
 
   const filteredProperties = useMemo(() => {
     let result = [...properties];
@@ -76,71 +86,82 @@ function App() {
     setFilters(null);
   };
 
+  // ✅ Intro bitince: bir daha göstermemek için kaydet
+  const handleIntroFinish = () => {
+    localStorage.setItem('intro_seen', '1');
+    setShowIntro(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <>
+      {showIntro && <Intro onFinish={handleIntroFinish} />} 
+      {showIntro && <Intro onFinish={handleIntroFinish} />}
 
-      <main className="max-w-[1400px] mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          <Sidebar
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
-          />
+      <div className="min-h-screen bg-gray-50">
+        <Header />
 
-          <div className="flex-1">
-            <div className="mb-8">
-              <HeroFilter onSearch={handleSearch} />
-            </div>
+        <main className="max-w-[1400px] mx-auto px-4 py-6">
+          <div className="flex gap-6">
+            <Sidebar
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
 
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">Emlak Vitrin</h2>
-                <div className="text-sm text-gray-600">
-                  <span className="font-semibold text-blue-600">
-                    {filteredProperties.length}
-                  </span>{' '}
-                  ilan bulundu
+            <div className="flex-1">
+              <div className="mb-8">
+                <HeroFilter onSearch={handleSearch} />
+              </div>
+
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-800">Emlak Vitrin</h2>
+                  <div className="text-sm text-gray-600">
+                    <span className="font-semibold text-blue-600">
+                      {filteredProperties.length}
+                    </span>{' '}
+                    ilan bulundu
+                  </div>
                 </div>
               </div>
+
+              {filteredProperties.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProperties.map((property) => (
+                    <PropertyCard
+                      key={property.id}
+                      property={property}
+                      onClick={() => setSelectedProperty(property)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg p-12 text-center">
+                  <p className="text-gray-500 text-lg">
+                    Aradığınız kriterlere uygun ilan bulunamadı.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setFilters(null);
+                      setSelectedCategory('all');
+                    }}
+                    className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Filtreleri Temizle
+                  </button>
+                </div>
+              )}
             </div>
-
-            {filteredProperties.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProperties.map((property) => (
-                  <PropertyCard
-                    key={property.id}
-                    property={property}
-                    onClick={() => setSelectedProperty(property)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-lg p-12 text-center">
-                <p className="text-gray-500 text-lg">
-                  Aradığınız kriterlere uygun ilan bulunamadı.
-                </p>
-                <button
-                  onClick={() => {
-                    setFilters(null);
-                    setSelectedCategory('all');
-                  }}
-                  className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Filtreleri Temizle
-                </button>
-              </div>
-            )}
           </div>
-        </div>
-      </main>
+        </main>
 
-      {selectedProperty && (
-        <PropertyDetail
-          property={selectedProperty}
-          onClose={() => setSelectedProperty(null)}
-        />
-      )}
-    </div>
+        {selectedProperty && (
+          <PropertyDetail
+            property={selectedProperty}
+            onClose={() => setSelectedProperty(null)}
+          />
+        )}
+      </div>
+    </>
   );
 }
 

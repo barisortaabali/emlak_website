@@ -2,11 +2,11 @@ import { Home, MessageCircle } from 'lucide-react';
 
 export default function Hero() {
   const handleWhatsApp = () => {
-    window.open('https://wa.me/', '_blank');
+    window.open('https://wa.me/905347471071', '_blank');
   };
 
   const handleSahibinden = () => {
-    window.open('https://www.sahibinden.com', '_blank');
+    window.open('https://barisemlakfethiye.sahibinden.com', '_blank');
   };
 
   return (

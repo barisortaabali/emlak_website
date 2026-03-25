@@ -12,6 +12,12 @@ A modern, premium Turkish real estate website built with React, TypeScript, Tail
 - **FormSection.tsx** - Reusable form field wrapper with label and error display
 - **AboutUs.tsx** - About section with company values and benefits
 
+### Admin Components (`src/components/admin/`)
+- **AdminLogin.tsx** - Premium login screen with email/password authentication
+- **AdminPanel.tsx** - Main admin dashboard for viewing and managing property requests
+- **ApplicationCard.tsx** - Individual application card with details, contact info, and delete button
+- **ConfirmDialog.tsx** - Reusable confirmation modal for destructive actions
+
 ### Database (Supabase)
 - **property_requests** table - Stores all form submissions
   - Columns: id, request_type, property_type, property_subtype, room_count, square_meters, location, description, full_name, phone, whatsapp, created_at
@@ -70,6 +76,54 @@ A modern, premium Turkish real estate website built with React, TypeScript, Tail
 - Authenticated read policy for staff access
 - Proper field constraints and validation
 
+## Admin Panel Features
+
+### Authentication
+- Supabase email/password authentication
+- Secure session management
+- Auto-detection of existing sessions
+- Premium login interface matching website design
+
+### Application Management
+- List all submitted property requests in reverse chronological order
+- Auto-refresh every 5 seconds to show new submissions
+- Color-coded badges for request type and property type
+- Detailed application cards showing all submission information
+- Delete functionality with confirmation dialog
+- Empty state when no applications exist
+- Error handling and user feedback
+
+### Application Card Details
+Each application displays:
+- Request type (Satın Alma / Satış)
+- Property type (Konut / Arazi)
+- Property subtype and room count
+- Square meters and location
+- Full contact information with clickable links
+- WhatsApp link (if provided)
+- Submission timestamp
+- Description/notes
+
+### UX Features
+- Loading states for initial data fetch and deletion
+- Confirmation dialog prevents accidental deletion
+- Real-time error alerts
+- Responsive grid layout
+- Smooth animations and transitions
+- Logout functionality
+
+## Database Security
+- Row Level Security (RLS) enabled on property_requests table
+- Public insert policy for anonymous form submissions
+- Authenticated read/delete policies for admin staff only
+- Proper field constraints and validation
+
+## Routing
+- Home page: `/` (landing page with form)
+- Admin: Hash-based routing with `#/admin`
+- Smart routing based on authentication state
+- Automatic redirect to login if session expires
+
 ## Deployment
 - Build command: `npm run build`
 - Static site deployment ready
@@ -79,6 +133,25 @@ A modern, premium Turkish real estate website built with React, TypeScript, Tail
 ## Environment Variables Required
 - VITE_SUPABASE_URL
 - VITE_SUPABASE_ANON_KEY
+
+## Setup Instructions
+
+### 1. Create Admin User in Supabase
+1. Go to Supabase Dashboard → Authentication → Users
+2. Click "Add User" and create a new user with:
+   - Email: your@email.com
+   - Password: strong_password
+   - Auto-confirm user (disable email confirmation)
+
+### 2. Deploy
+```bash
+npm run build
+```
+
+### 3. Access Admin Panel
+- Navigate to `/#/admin` or click the settings button (⚙️) on the landing page
+- Login with your admin credentials
+- Manage property requests
 
 ## Technical Stack
 - React 18.3.1

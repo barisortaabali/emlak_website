@@ -118,7 +118,7 @@ export default function PropertyForm({ supabase }: PropertyFormProps) {
   };
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-white to-slate-50">
+    <section id="basvuru-formu" className="py-20 px-4 bg-gradient-to-b from-white to-slate-50">
       <div className="max-w-2xl mx-auto">
         <div className="mb-12 text-center">
           <h2 className="text-4xl md:text-4xl font-light text-gray-900 mb-3">

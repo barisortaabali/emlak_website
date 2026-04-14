@@ -1,5 +1,7 @@
 import { MessageCircle, FileText } from 'lucide-react';
 
+import logo from '../assets/logo.png';
+
 export default function Hero() {
   const handleWhatsApp = () => {
     window.open('https://wa.me/', '_blank');
@@ -14,7 +16,7 @@ export default function Hero() {
       <div className="w-full max-w-2xl">
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center justify-center mb-6">
-            <img src="/logo.png" alt="Logo" className="w-40 h-40 object-contain drop-shadow-xl" />
+            <img src={logo} alt="Logo" className="w-40 h-40 object-contain drop-shadow-xl" />
           </div>
 
           <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-3 tracking-tight">
